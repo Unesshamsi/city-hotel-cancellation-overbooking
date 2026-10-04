@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>City Hotel — Cancellation & Revenue Management Dashboard</title>
+<style>
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f8fafc; --text:#0f172a; --muted:#64748b;
+  --line:#e2e8f0; --navy:#14385f; --navy2:#0b2947; --cyan:#1182a8; --cyan2:#1d9ec5;
+  --amber:#d97706; --green:#15803d; --red:#b91c1c; --shadow:0 8px 24px rgba(15,23,42,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#eef3f8 0,#f6f8fb 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+.shell{max-width:1480px;margin:0 auto;padding:24px}
+.topbar{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;border-radius:18px;padding:22px 26px;box-shadow:var(--shadow)}
+.topbar .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.72;font-weight:700}
+.topbar h1{margin:6px 0 4px;font-size:25px;line-height:1.15}
+.topbar p{margin:0;opacity:.78;font-size:13px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:14px 0}
+.control{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-width:160px;box-shadow:0 3px 12px rgba(15,23,42,.035)}
+.control label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:800;color:var(--muted);margin-bottom:4px}
+.control select,.control input{width:100%;border:none;background:transparent;color:var(--text);font-weight:700;outline:none}
+.control.slider{min-width:220px}
+.sliderrow{display:flex;justify-content:space-between;font-size:12px;align-items:center}
+.sliderrow strong{color:var(--navy)}
+.btn{height:40px;border-radius:10px;border:1px solid var(--line);background:#fff;padding:0 14px;font-weight:800;color:var(--navy);cursor:pointer}
+.btn:hover{background:#f8fafc}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi .label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+.kpi .value{font-size:27px;font-weight:900;margin-top:5px;letter-spacing:-.02em}
+.kpi .sub{font-size:12px;color:var(--muted);margin-top:3px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.badge.ok{background:#ecfdf3;color:#166534}.badge.warn{background:#fff7ed;color:#9a3412}.badge.info{background:#eff6ff;color:#1d4ed8}
+.grid{display:grid;grid-template-columns:1.25fr .9fr;gap:14px}
+.stack{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:var(--shadow)}
+.card h2{font-size:14px;margin:0 0 3px}.card .hint{font-size:11px;color:var(--muted);margin-bottom:10px}
+.chartbox{height:300px;position:relative}
+.chartbox.tall{height:340px}
+.chartbox.small{height:250px}
+svg{width:100%;height:100%;overflow:visible}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-top:7px}
+.legend span{display:inline-flex;align-items:center;gap:5px}.dot{width:9px;height:9px;border-radius:999px;display:inline-block}
+.tooltip{position:fixed;pointer-events:none;z-index:20;background:#0f172a;color:#fff;border-radius:8px;padding:8px 10px;font-size:11px;box-shadow:0 7px 20px rgba(0,0,0,.18);display:none;max-width:240px}
+.tablewrap{overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+th,td{padding:9px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface2)}
+tr:last-child td{border-bottom:none}
+.rightcallout{background:linear-gradient(135deg,#eff6ff,#f8fafc);border:1px solid #dbeafe}
+.policy{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.policy .tier{padding:12px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.tier .name{font-weight:900;font-size:12px}.tier .risk{font-size:11px;color:var(--muted)}
+.tier .big{font-size:22px;font-weight:900;margin:8px 0 3px}
+.smallmuted{font-size:10px;color:var(--muted)}
+.metricgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metric{border:1px solid var(--line);border-radius:12px;padding:11px;background:var(--surface2)}
+.metric strong{display:block;font-size:18px}.metric span{font-size:10px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tab{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:800;font-size:11px;cursor:pointer}.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.note{padding:11px 12px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;color:#78350f;font-size:11px;line-height:1.45}
+.footer{margin-top:14px;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.roadmap{display:grid;gap:8px}.road{display:grid;grid-template-columns:170px 1fr 1fr;gap:10px;align-items:center;font-size:11px}.bar{height:15px;border-radius:5px;background:repeating-linear-gradient(90deg,#dbe7f3 0,#dbe7f3 calc(8.333% - 2px),#fff calc(8.333% - 2px),#fff 8.333%);overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#1f6f99,#2ca2bf);border-radius:5px}
+@media (max-width:1050px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:650px){.shell{padding:12px}.kpis{grid-template-columns:1fr}.policy,.metricgrid{grid-template-columns:1fr}.control{min-width:140px;flex:1}.chartbox{height:260px}.chartbox.tall{height:290px}.road{grid-template-columns:1fr}.topbar h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <section class="topbar">
+    <div class="eyebrow">City Hotel · Decision Support</div>
+    <h1>CANCELLATION & REVENUE MANAGEMENT DASHBOARD</h1>
+    <p>Interactive view of cancellation risk, overbooking economics, deposit policy and implementation readiness.</p>
+  </section>
+
+  <section class="controls">
+    <div class="control"><label>Segment</label><select id="segment"></select></div>
+    <div class="control"><label>Model view</label><select id="modelView"><option value="booking">Booking-time GBM</option><option value="near">Near-arrival GBM</option></select></div>
+    <div class="control"><label>Walk-cost scenario</label><select id="walkCost"><option value="low">Low · €125</option><option value="base" selected>Base · €200</option><option value="high">High · €300</option></select></div>
+    <div class="control slider"><label>Overbooking k above 60-room capacity</label><div class="sliderrow"><input id="kSlider" type="range" min="0" max="30" step="1" value="10"><strong id="kValue">k = 10</strong></div></div>
+    <button class="btn" id="resetBtn">Reset</button>
+    <button class="btn" id="printBtn">Print / PDF</button>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi"><div class="label">Test cancellation rate</div><div class="value" id="kpiCancel">28.2%</div><div class="sub">Untouched future test window</div></div>
+    <div class="kpi"><div class="label">Best model AUC</div><div class="value" id="kpiAuc">0.800</div><div class="sub">Near-arrival GBM · diagnostic</div></div>
+    <div class="kpi"><div class="label">Base overbooking</div><div class="value" id="kpiK">k = 10</div><div class="sub" id="kpiProfit">€3,048 expected profit / night</div></div>
+    <div class="kpi"><div class="label">Deposit net uplift</div><div class="value" id="kpiDeposit">€168k</div><div class="sub">Across 7,172 eligible test bookings</div></div>
+  </section>
+
+  <div class="grid">
+    <div class="stack">
+      <section class="card">
+        <h2>1. Cancellation rate by lead time</h2>
+        <div class="hint" id="leadHint">Selected segment · observed cancellation rate by lead-time bucket</div>
+        <div class="chartbox" id="leadChart"></div>
+      </section>
+
+      <section class="card">
+        <h2>2. Seasonal cancellation trend</h2>
+        <div class="hint">Monthly cancellation rate; data gaps are shown as gaps rather than imputed.</div>
+        <div class="chartbox tall" id="seasonChart"></div>
+        <div class="note">Search-interest series is pending. The workbook notes that Lisbon weather and Google Trends files were absent, so no external-series inference is used here.</div>
+      </section>
+
+      <section class="card">
+        <h2>5. Overbooking profit sensitivity</h2>
+        <div class="hint">Room revenue = €98.8 / occupied room. Base capacity = 60 rooms. Use the slider above to inspect any k.</div>
+        <div class="chartbox" id="obChart"></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#2a6f97"></i>Low walk cost</span>
+          <span><i class="dot" style="background:#d97706"></i>Base walk cost</span>
+          <span><i class="dot" style="background:#15803d"></i>High walk cost</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="card">
+        <h2>3. Cancellation by deposit type & segment</h2>
+        <div class="hint">Select a segment above to compare the same segment across deposit types.</div>
+        <div class="chartbox" id="depositChart"></div>
+      </section>
+
+      <section class="card">
+        <h2>4. Model performance</h2>
+        <div class="hint">AUC on the temporal test set; model view also controls the SHAP panel below.</div>
+        <div class="chartbox small" id="aucChart"></div>
+      </section>
+
+      <section class="card">
+        <h2>6. Feature importance (SHAP)</h2>
+        <div class="tabs"><button class="tab active" data-shap="booking">Booking-time</button><button class="tab" data-shap="near">Near-arrival</button></div>
+        <div class="chartbox tall" id="shapChart"></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card rightcallout" style="margin-top:14px">
+    <h2>Recommended policy</h2>
+    <div class="metricgrid" style="margin-top:10px">
+      <div class="metric"><strong>k = 10</strong><span>Base case above 60-room assumed capacity</span></div>
+      <div class="metric"><strong>€200</strong><span>Base walk cost / walked guest</span></div>
+      <div class="metric"><strong>10%</strong><span>Deposit for 20–40% risk</span></div>
+      <div class="metric"><strong>25%</strong><span>Deposit for >40% risk</span></div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <h2>Deposit policy economics</h2>
+    <div class="hint">Scenario-based financial impact for eligible bookings; exclusions follow the workbook policy scope.</div>
+    <div class="policy" id="policyCards"></div>
+    <div class="tablewrap" style="margin-top:12px">
+      <table>
+        <thead><tr><th>Tier</th><th>Eligible</th><th>Share</th><th>Avg predicted cancel</th><th>Observed cancel</th><th>Deposit</th><th>Prevented</th><th>Net incremental revenue</th></tr></thead>
+        <tbody id="depositTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <h2>Implementation roadmap · 12 weeks</h2>
+    <div class="hint">Operationalization sequence preserved from the workbook roadmap.</div>
+    <div class="roadmap" style="margin-top:8px">
+      <div class="road"><strong>Data & governance</strong><span>W1–W2</span><div class="bar"><div class="fill" style="width:16.7%"></div></div></div>
+      <div class="road"><strong>Model validation</strong><span>W1–W4</span><div class="bar"><div class="fill" style="width:33.3%"></div></div></div>
+      <div class="road"><strong>Policy design</strong><span>W3–W5</span><div class="bar"><div class="fill" style="margin-left:16.7%;width:25%"></div></div></div>
+      <div class="road"><strong>PMS / RMS integration</strong><span>W4–W8</span><div class="bar"><div class="fill" style="margin-left:25%;width:41.7%"></div></div></div>
+      <div class="road"><strong>Shadow pilot</strong><span>W7–W9</span><div class="bar"><div class="fill" style="margin-left:50%;width:25%"></div></div></div>
+      <div class="road"><strong>A/B policy pilot</strong><span>W9–W11</span><div class="bar"><div class="fill" style="margin-left:66.7%;width:25%"></div></div></div>
+      <div class="road"><strong>Scale & monitoring</strong><span>W11–W12</span><div class="bar"><div class="fill" style="margin-left:83.3%;width:16.7%"></div></div></div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>Source: supplied City Hotel workbook · dataset provenance: <a id="sourceLink" href="#" target="_blank" rel="noopener"></a></span>
+    <span>Important: room inventory is an explicit 60-room assumption; deposit economics are scenario-based, not causal.</span>
+  </div>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const DATA = {"segments":["All","Online TA","Offline TA/TO","Direct","Groups"],"leadBins":["0–7","8–30","31–60","61–90","91–120","121–180","181–270","271–365","366+"],"leadBySeg":{"All":[0.10510204081632653,0.27888181040220594,0.3285569220354282,0.3356643356643357,0.3560621761658031,0.37512999554300996,0.4124915749269827,0.5468639887244539,0.512],"Online TA":[0.10969927996611606,0.3346374179125332,0.39209486166007906,0.3901624749610505,0.41551827441581785,0.4267425320056899,0.4745333755140778,0.591304347826087,0.8571428571428571],"Offline TA/TO":[0.09225512528473805,0.12533333333333332,0.12822517591868648,0.17091295116772823,0.22386363636363638,0.21562809099901087,0.20214395099540583,0.33993399339933994,0.3532934131736527],"Direct":[0.09925093632958802,0.19781221513217867,0.24012158054711247,0.18340611353711792,0.20809248554913296,0.17580340264650285,0.232,0.2698412698412698,1],"Groups":[0.15725806451612903,0.18811881188118812,0.20393120393120392,0.30847457627118646,0.26046511627906976,0.45161290322580644,0.356353591160221,0.7261410788381742,0.6331658291457286]},"depositTypes":["All","Online TA","Offline TA/TO","Direct"],"depositBySeg":{"All":[0.2900751707559049,0.3608891180430237,0.1418113965838955,0.16353111432706222],"Online TA":[0.9715639810426541,0.8,0.9962825278810409,0.7777777777777778],"Offline TA/TO":[0.6666666666666666,1,0,1],"Direct":[null,null,null,null],"Groups":[null,null,null,null]},"months":["2015-01","2015-02","2015-03","2015-04","2015-05","2015-06","2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06","2016-07","2016-08","2016-09","2016-10","2016-11","2016-12","2017-01","2017-02","2017-03","2017-04","2017-05","2017-06","2017-07"],"monthlyBySeg":{"All":[null,null,null,null,null,null,null,0.20799273387829245,null,null,null,0.21674876847290642,0.20776699029126214,null,0.2734970364098222,0.3103734439834025,0.2747863247863248,0.2680683311432326,null,0.32407407407407407,null,0.31718395155185464,0.2858486130700517,0.3827534039334342,0.32408500590318773,null,null,0.37528174305033807,0.360222077073808,0.33456153279292555,null],"Online TA":[null,null,null,null,null,null,null,0.19193857965451055,null,null,null,0.29024943310657597,0.27911275415896486,null,0.3494694960212202,0.3477518497438816,0.3258655804480652,0.3210818307905687,null,0.36494653649465364,null,0.3786407766990291,0.34554597701149425,0.4562631210636809,0.40486169321039395,null,null,0.4409161894846434,0.4080865068171133,0.36536430834213307,null],"Offline TA/TO":[null,null,null,null,null,null,null,0.20535714285714285,null,null,null,0.13654618473895583,0.1278538812785388,null,0.13895781637717122,0.19217081850533807,0.16717325227963525,0.1733615221987315,null,0.1601423487544484,null,0.17218543046357615,0.12121212121212122,0.12875536480686695,0.12359550561797752,null,null,0.20610687022900764,0.26282051282051283,0.2773109243697479,null],"Direct":[null,null,null,null,null,null,null,0.0787037037037037,null,null,null,0.21022727272727273,0.15714285714285714,null,0.13157894736842105,0.17318435754189945,0.18981481481481483,0.15425531914893617,null,0.19463087248322147,null,0.20772946859903382,0.21195652173913043,0.24175824175824176,0.10734463276836158,null,null,0.13861386138613863,0.19494584837545126,0.21498371335504887,null],"Groups":[null,null,null,null,null,null,null,0.3854748603351955,null,null,null,null,null,null,null,null,0.2916666666666667,null,null,0.75,null,0.4857142857142857,null,0.9473684210526315,0.20863309352517986,null,null,0.41237113402061853,0.4263959390862944,0.504424778761062,null],"Corporate":[null,null,null,null,null,null,null,null,null,null,null,0.08536585365853659,null,null,null,0.11940298507462686,null,null,null,null,null,0.12962962962962962,0.15942028985507245,0.1276595744680851,null,null,null,0.2127659574468085,0.10204081632653061,0.12121212121212122,null],"Complementary":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.13043478260869565,null,null,null,null,0.08333333333333333,null,null,null,0.11538461538461539,null,null,null,null,null,null,null],"Aviation":[null,null,null,null,null,null,null,null,null,"Model","AUC","AP",null,null,null,null,0.34615384615384615,null,null,null,null,null,null,null,null,null,null,0.21428571428571427,null,0.32432432432432434,null],"Undefined":[null,null,null,null,null,null,null,null,null,"Booking-time Logistic",0.7504937904811843,0.5553201334619526,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"modelPerf":[{"label":"Booking-time Logistic","version":"Booking-time","model":"Logistic","auc":0.7504937904811843,"ap":0.5553201334619526,"brier":0.1689665893401968,"ece":0.01791985552933135},{"label":"Booking-time GBM","version":"Booking-time","model":"Gradient boosting","auc":0.7750744816504922,"ap":0.5449164796643008,"brier":0.16798631841261738,"ece":0.05592845357363539},{"label":"Near-arrival Logistic","version":"Near-arrival","model":"Logistic","auc":0.7680807223709479,"ap":0.5739190196338599,"brier":0.16471417190358087,"ece":0.01807227787722842},{"label":"Near-arrival GBM","version":"Near-arrival","model":"Gradient boosting","auc":0.7995229877591453,"ap":0.5762994641253271,"brier":0.1604788136835383,"ece":0.05151901164624971}],"shap":{"booking":[{"feature":"country","abs":0.7478069849539438,"signed":-0.08624330686868503},{"feature":"total_of_special_requests","abs":0.6645742471098839,"signed":-0.07505225215976476},{"feature":"market_segment","abs":0.6481500473659099,"signed":0.2136905502465316},{"feature":"lead_time","abs":0.3781933573404364,"signed":-0.1927618735168883},{"feature":"adr","abs":0.35060856499283716,"signed":0.2757825315251276},{"feature":"required_car_parking_spaces","abs":0.3189951621893103,"signed":0.04315623639526924},{"feature":"customer_type","abs":0.18504103026670463,"signed":0.09231052848420862},{"feature":"previous_cancellations","abs":0.14862140988432893,"signed":-0.055795743140574304},{"feature":"booking_month","abs":0.14714923221753465,"signed":-0.05077806486342061},{"feature":"previous_bookings_not_canceled","abs":0.0938992133584158,"signed":-0.037597647462870656},{"feature":"deposit_type","abs":0.07598766718092048,"signed":-0.07054517668952448},{"feature":"arrival_month","abs":0.07171964336160877,"signed":-0.051015896138617615},{"feature":"meal","abs":0.06321125393742064,"signed":0.019183304740432814},{"feature":"days_to_nearest_holiday","abs":0.06078667324484271,"signed":0.048092906872724724},{"feature":"total_nights","abs":0.04803036318990045,"signed":-0.008332127902873954}],"near":[{"feature":"country","abs":0.7469861315494741,"signed":-0.09637615701026649},{"feature":"total_of_special_requests","abs":0.6268816999449596,"signed":-0.07849630272185261},{"feature":"market_segment","abs":0.5559135490342109,"signed":0.17033267798274204},{"feature":"lead_time","abs":0.3671626867413675,"signed":-0.18972866926489362},{"feature":"adr","abs":0.34789296664211716,"signed":0.2772687255758776},{"feature":"required_car_parking_spaces","abs":0.31837271944923756,"signed":0.04253022614542368},{"feature":"room_type_changed","abs":0.2921248718605579,"signed":0.10614790035761304},{"feature":"customer_type","abs":0.15707011349717734,"signed":0.06918894232148846},{"feature":"previous_cancellations","abs":0.15213502070352738,"signed":-0.05858622831640061},{"feature":"booking_changes","abs":0.129747559770263,"signed":-0.00921885324848042},{"feature":"booking_month","abs":0.12652085187553597,"signed":-0.04720939188622034},{"feature":"previous_bookings_not_canceled","abs":0.09063803914174325,"signed":-0.03571903889523477},{"feature":"deposit_type","abs":0.07663048096627612,"signed":-0.07143542460801235},{"feature":"arrival_month","abs":0.07591740682928554,"signed":-0.051662258487430966},{"feature":"days_to_nearest_holiday","abs":0.06113688422600289,"signed":0.04298985481705937}]},"overbooking":[{"k":0,"low":2990.934170126259,"base":2990.934170126259,"high":2990.934170126259},{"k":1,"low":3001.392479147206,"base":3001.388470268235,"high":3001.383125096272},{"k":2,"low":3010.821162953447,"base":3010.7941581770874,"high":3010.7581518086095},{"k":3,"low":3019.3797224212667,"base":3019.281439816434,"high":3019.1503963433242},{"k":4,"low":3027.241115145996,"base":3026.987718426148,"high":3026.6498561330172},{"k":5,"low":3033.857012950497,"base":3033.326737412478,"high":3032.6197033617855},{"k":6,"low":3039.348348220483,"base":3038.3946461129353,"high":3037.123043302872},{"k":7,"low":3043.9365769489755,"base":3042.399383407516,"high":3040.3497920189025},{"k":8,"low":3047.592455818453,"base":3045.2920711114284,"high":3042.2248915020623},{"k":9,"low":3050.447611005006,"base":3047.221964369329,"high":3042.9211021884244},{"k":10,"low":3052.2575397310666,"base":3047.9592007899996,"high":3042.2280822019106},{"k":11,"low":3053.1564036410036,"base":3047.641379387845,"high":3040.2880137169664},{"k":12,"low":3053.220892025428,"base":3046.392412009437,"high":3037.2877719881158},{"k":13,"low":3052.8251064854912,"base":3044.563798978217,"high":3033.5487223018513},{"k":14,"low":3052.002631964905,"base":3042.250488355605,"high":3029.2476302098703},{"k":15,"low":3050.6102966523054,"base":3039.3276926719304,"high":3024.284220698097},{"k":16,"low":3049.014739209095,"base":3036.164640287268,"high":3019.031175058165},{"k":17,"low":3047.235757229507,"base":3032.8395796788304,"high":3013.6446762779287},{"k":18,"low":3045.307456987302,"base":3029.389074707991,"high":3008.1645650022415},{"k":19,"low":3043.257369404593,"base":3025.79092153059,"high":3002.502324365251},{"k":20,"low":3041.247691467589,"base":3022.3376417887002,"high":2997.1242422168484},{"k":21,"low":3039.3798219825903,"base":3019.2002362995217,"high":2992.2941220554303},{"k":22,"low":3037.642424317015,"base":3016.32269896825,"high":2987.8963985032283},{"k":23,"low":3035.9179704787366,"base":3013.4986396107256,"high":2983.6061984533767},{"k":24,"low":3034.2458648734264,"base":3010.768902656033,"high":2979.4662863661742},{"k":25,"low":3032.691285863418,"base":3008.2323301084502,"high":2975.6203891018267},{"k":26,"low":3031.177013506206,"base":3005.7697146693713,"high":2971.893316220259},{"k":27,"low":3029.6808642175797,"base":3003.3491422948205,"high":2968.2401797311413},{"k":28,"low":3028.372369302459,"base":3001.2459375478857,"high":2965.07736187512},{"k":29,"low":3027.1684591982903,"base":2999.3115435593554,"high":2962.1689893741086},{"k":30,"low":3026.1035861941723,"base":2997.60499717578,"high":2959.6068784845907}],"obScenarios":{"Base":{"k":10,"profit":3047.9592007899996,"walked":0.05731118588089064,"accepted":40.930851063829785},"High":{"k":9,"profit":3042.9211021884244,"walked":0.04300862180903913,"accepted":40.8031914893617},"Low":{"k":12,"profit":3053.2208920254284,"walked":0.09104640021321363,"accepted":41.12234042553192}},"depositTiers":[{"tier":"Low risk","band":"<20%","eligible":3624,"share":0.5052983825989961,"pred_cancel":0.08777270446193881,"observed_cancel":0.14100441501103753,"deposit_pct":0,"cancel_reduction":0,"booking_loss":0,"expected_cancel":318.08828097006625,"prevented":0,"bookings_lost":0,"avg_room_value":337.09660044150115,"retained":0,"lost":0,"net":0},{"tier":"Medium risk","band":"20%-40%","eligible":1875,"share":0.26143335192414946,"pred_cancel":0.27856484259121994,"observed_cancel":0.3472,"deposit_pct":0.1,"cancel_reduction":0.2,"booking_loss":0.04,"expected_cancel":522.3090798585374,"prevented":100.2833433328392,"bookings_lost":75,"avg_room_value":462.089472,"retained":46339.877171066386,"lost":25002.569322694504,"net":21337.307848371882},{"tier":"High risk","band":">40%","eligible":1673,"share":0.23326826547685445,"pred_cancel":0.6246373943552009,"observed_cancel":0.5505080693365212,"deposit_pct":0.25,"cancel_reduction":0.35,"booking_loss":0.08,"expected_cancel":1045.0183607562512,"prevented":336.4959121635129,"bookings_lost":133.84,"avg_room_value":513.20578601315,"retained":172691.64909208752,"lost":25782.704861593164,"net":146908.94423049435}],"depositMetrics":{"eligible":7172,"baseline_revenue":2037070.3227839707,"policy_revenue":2205316.574862837,"net_incremental":168246.25207886624,"prevented":436.7792554963521},"depositSensitivity":{"Low":40899.786839731474,"Base":168246.25207886624,"High":326646.4906958911},"summary":{"base_capacity":60,"base_k":10,"base_walk_cost":200,"base_uplift":57,"test_cancel_rate":0.28202218860312656,"best_auc":0.7995229877591453,"best_model":"Near-arrival GBM"},"sources":{"dataset":"https://doi.org/10.1016/j.dib.2018.11.126","bundle":"city_hotel_prompt2_deliverables.zip"}};
+
+const $ = id => document.getElementById(id);
+const fmtPct = x => x == null ? "—" : (x*100).toFixed(1)+"%";
+const fmtEur = x => "€" + Math.round(x).toLocaleString("en-GB");
+const fmtK = x => "€" + (x/1000).toFixed(0) + "k";
+const esc = s => String(s).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+
+$("segment").innerHTML = DATA.segments.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("");
+$("sourceLink").textContent = "Hotel Booking Demand dataset";
+$("sourceLink").href = DATA.sources.dataset;
+
+function elNS(tag, attrs={}, text=""){
+  const e=document.createElementNS("http://www.w3.org/2000/svg",tag);
+  Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));
+  if(text!=="" && text!=null) e.textContent=text;
+  return e;
+}
+function chartRoot(target, viewBoxW=720, viewBoxH=280){
+  const box=$(target); box.innerHTML="";
+  const svg=elNS("svg",{viewBox:`0 0 ${viewBoxW} ${viewBoxH}`, preserveAspectRatio:"none"});
+  box.appendChild(svg); return svg;
+}
+function scale(v, a,b, c,d){ return c + (v-a)*(d-c)/(b-a); }
+function tooltip(title, lines){
+  const t=$("tooltip");
+  t.innerHTML = `<strong>${esc(title)}</strong><br>` + lines.map(esc).join("<br>");
+  t.style.display="block";
+}
+function moveTooltip(ev){ const t=$("tooltip"); t.style.left=(ev.clientX+12)+"px"; t.style.top=(ev.clientY+12)+"px"; }
+function hideTooltip(){ $("tooltip").style.display="none"; }
+
+function axes(svg, {w,h,m, yMax, yFmt=(v)=>v, yTicks=4, xLabels=[]}){
+  const plotW=w-m.l-m.r, plotH=h-m.t-m.b;
+  for(let i=0;i<=yTicks;i++){
+    const y=m.t + plotH*i/yTicks, val=yMax*(1-i/yTicks);
+    svg.appendChild(elNS("line",{x1:m.l,y1:y,x2:w-m.r,y2:y,stroke:"#e2e8f0","stroke-width":"1"}));
+    svg.appendChild(elNS("text",{x:m.l-7,y:y+4,"text-anchor":"end",fill:"#64748b","font-size":"10"},yFmt(val)));
+  }
+  if(xLabels.length){
+    xLabels.forEach((lab,i)=>{
+      const x=m.l + (xLabels.length===1 ? plotW/2 : plotW*i/(xLabels.length-1));
+      svg.appendChild(elNS("text",{x,y:h-m.b+18,"text-anchor":"middle",fill:"#64748b","font-size":"9"},lab));
+    });
+  }
+  return {plotW,plotH};
+}
+
+function drawLead(){
+  const svg=chartRoot("leadChart"); const w=720,h=280,m={l:46,r:18,t:18,b:44};
+  const seg=$("segment").value, vals=DATA.leadBySeg[seg];
+  const {plotW,plotH}=axes(svg,{w,h,m,yMax:0.65,yFmt:v=>Math.round(v*100)+"%",xLabels:DATA.leadBins});
+  const pts=vals.map((v,i)=>v==null?null:[m.l+plotW*i/(vals.length-1),m.t+plotH-(v/0.65)*plotH]).filter(Boolean);
+  let d=""; pts.forEach((p,i)=>d += (i?" L ":"M ")+p[0]+" "+p[1]);
+  svg.appendChild(elNS("path",{d,fill:"none",stroke:"#1d7ea3","stroke-width":"3","stroke-linecap":"round","stroke-linejoin":"round"}));
+  vals.forEach((v,i)=>{
+    if(v==null)return;
+    const x=m.l+plotW*i/(vals.length-1), y=m.t+plotH-(v/0.65)*plotH;
+    const c=elNS("circle",{cx:x,cy:y,r:4,fill:"#fff",stroke:"#1d7ea3","stroke-width":"2"});
+    c.addEventListener("mousemove",e=>{tooltip(DATA.leadBins[i],[`${seg}: ${fmtPct(v)}`]);moveTooltip(e)});
+    c.addEventListener("mouseleave",hideTooltip); svg.appendChild(c);
+  });
+  $("leadHint").textContent = `${seg} · observed cancellation rate by lead-time bucket`;
+}
+
+function drawDeposit(){
+  const svg=chartRoot("depositChart"); const w=720,h=280,m={l:50,r:16,t:18,b:50};
+  const vals=DATA.depositBySeg[$("segment").value];
+  const {plotW,plotH}=axes(svg,{w,h,m,yMax:1,yFmt:v=>Math.round(v*100)+"%",xLabels:DATA.depositTypes});
+  const bw=plotW/vals.length*.58;
+  vals.forEach((v,i)=>{
+    if(v==null)return;
+    const x=m.l+plotW*(i+.5)/vals.length-bw/2, y=m.t+plotH-(v)*plotH;
+    const r=elNS("rect",{x,y,width:bw,height:(m.t+plotH-y),rx:5,fill:["#2a6f97","#2a6f97","#2a6f97","#2a6f97"][i],opacity:"0.92"});
+    r.addEventListener("mousemove",e=>{tooltip(DATA.depositTypes[i],[`${$("segment").value}: ${fmtPct(v)}`]);moveTooltip(e)});
+    r.addEventListener("mouseleave",hideTooltip); svg.appendChild(r);
+    svg.appendChild(elNS("text",{x:x+bw/2,y:y-7,"text-anchor":"middle",fill:"#0f172a","font-size":"10","font-weight":"800"},fmtPct(v)));
+  });
+}
+
+function drawSeason(){
+  const svg=chartRoot("seasonChart"); const w=720,h=320,m={l:46,r:18,t:18,b:42};
+  const seg=$("segment").value, vals=DATA.monthlyBySeg[seg] || [];
+  const {plotW,plotH}=axes(svg,{w,h,m,yMax:0.65,yFmt:v=>Math.round(v*100)+"%",xLabels:DATA.months.map((x,i)=>i%3===0?x.slice(2):"")});
+  const step=plotW/(vals.length-1);
+  let d="", last=null;
+  vals.forEach((v,i)=>{
+    if(v==null){last=null;return}
+    const x=m.l+step*i, y=m.t+plotH-(v/0.65)*plotH;
+    d += (last==null?"M ":" L ")+x+" "+y; last=i;
+  });
+  svg.appendChild(elNS("path",{d,fill:"none",stroke:"#1d7ea3","stroke-width":"2.6","stroke-linecap":"round","stroke-linejoin":"round"}));
+  vals.forEach((v,i)=>{
+    if(v==null)return;
+    if(i<6)return;
+    const x=m.l+step*i, y=m.t+plotH-(v/0.65)*plotH;
+    const c=elNS("circle",{cx:x,cy:y,r:2.6,fill:"#1d7ea3"});
+    c.addEventListener("mousemove",e=>{tooltip(DATA.months[i],[`${seg}: ${fmtPct(v)}`]);moveTooltip(e)});
+    c.addEventListener("mouseleave",hideTooltip); svg.appendChild(c);
+  });
+  const note=elNS("text",{x:w-m.r,y:14,"text-anchor":"end",fill:"#94a3b8","font-size":"9"},"Gaps = not supplied");
+  svg.appendChild(note);
+}
+
+function drawAuc(){
+  const svg=chartRoot("aucChart"); const w=720,h=240,m={l:48,r:16,t:20,b:50};
+  const {plotW,plotH}=axes(svg,{w,h,m,yMax:0.85,yFmt:v=>v.toFixed(2),xLabels:DATA.modelPerf.map(x=>x.label.replace(" ","\n"))});
+  const bw=plotW/DATA.modelPerf.length*.55;
+  DATA.modelPerf.forEach((d,i)=>{
+    const x=m.l+plotW*(i+.5)/DATA.modelPerf.length-bw/2, y=m.t+plotH-(d.auc/0.85)*plotH;
+    const r=elNS("rect",{x,y,width:bw,height:m.t+plotH-y,rx:4,fill:"#1d678b"});
+    r.addEventListener("mousemove",e=>{tooltip(d.label,[`AUC: ${d.auc.toFixed(3)}`,`AP: ${d.ap.toFixed(3)}`]);moveTooltip(e)});
+    r.addEventListener("mouseleave",hideTooltip); svg.appendChild(r);
+    svg.appendChild(elNS("text",{x:x+bw/2,y:y-6,"text-anchor":"middle",fill:"#0f172a","font-size":"10","font-weight":"800"},d.auc.toFixed(3)));
+  });
+}
+
+let currentShap="booking";
+function drawShap(){
+  const svg=chartRoot("shapChart"); const w=720,h=320,m={l:170,r:26,t:16,b:26};
+  const arr=[...DATA.shap[currentShap]].sort((a,b)=>b.abs-a.abs).slice(0,9);
+  const max=Math.max(...arr.map(x=>x.abs));
+  arr.forEach((d,i)=>{
+    const y=m.t+i*((h-m.t-m.b)/arr.length)+4, barH=((h-m.t-m.b)/arr.length)-8, width=(d.abs/max)*(w-m.l-m.r);
+    svg.appendChild(elNS("text",{x:m.l-8,y:y+barH*.72,"text-anchor":"end",fill:"#334155","font-size":"10"},d.feature));
+    svg.appendChild(elNS("rect",{x:m.l,y,width,height:barH,rx:4,fill:"#1d7ea3",opacity:"0.9"}));
+    svg.appendChild(elNS("text",{x:m.l+width+7,y:y+barH*.72,fill:"#0f172a","font-size":"10","font-weight":"800"},d.abs.toFixed(2)));
+    const r=elNS("rect",{x:m.l,y,width:Math.max(width,2),height:barH,fill:"transparent"});
+    r.addEventListener("mousemove",e=>{tooltip(d.feature,[`Mean |SHAP|: ${d.abs.toFixed(3)}`,`Mean signed SHAP: ${d.signed.toFixed(3)}`]);moveTooltip(e)});
+    r.addEventListener("mouseleave",hideTooltip); svg.appendChild(r);
+  });
+}
+
+function scenarioKey(){ return $("walkCost").value; }
+function drawOverbooking(){
+  const svg=chartRoot("obChart"); const w=720,h=280,m={l:50,r:18,t:18,b:42};
+  const yMax=Math.max(...DATA.overbooking.flatMap(x=>[x.low,x.base,x.high]))+20;
+  axes(svg,{w,h,m,yMax:yMax,yFmt:v=>"€"+Math.round(v).toLocaleString("en-GB"),xLabels:DATA.overbooking.map(x=>x.k).filter((_,i)=>i%5===0)});
+  const colors={low:"#2a6f97",base:"#d97706",high:"#15803d"};
+  ["low","base","high"].forEach(key=>{
+    let d="";
+    DATA.overbooking.forEach((p,i)=>{
+      const x=m.l+(w-m.l-m.r)*i/(DATA.overbooking.length-1), y=m.t+(h-m.t-m.b)-(p[key]/yMax)*(h-m.t-m.b);
+      d+=(i?" L ":"M ")+x+" "+y;
+    });
+    svg.appendChild(elNS("path",{d,fill:"none",stroke:colors[key],"stroke-width":key==="base"?"3":"2.2","stroke-linecap":"round","opacity":key==="base"?"1":".75"}));
+  });
+  const selected=+$("kSlider").value, p=DATA.overbooking.find(x=>x.k===selected);
+  const key=scenarioKey(), val=p[key];
+  const x=m.l+(w-m.l-m.r)*selected/(DATA.overbooking.length-1), y=m.t+(h-m.t-m.b)-(val/yMax)*(h-m.t-m.b);
+  svg.appendChild(elNS("line",{x1:x,y1:m.t,x2:x,y2:h-m.b,stroke:"#94a3b8","stroke-dasharray":"4 4"}));
+  svg.appendChild(elNS("circle",{cx:x,cy:y,r:5,fill:"#fff",stroke:colors[key],"stroke-width":"3"}));
+  svg.appendChild(elNS("text",{x:x+8,y:y-9,fill:"#0f172a","font-size":"10","font-weight":"900"},fmtEur(val)));
+}
+
+function renderPolicy(){
+  $("policyCards").innerHTML = DATA.depositTiers.map(d=>`
+    <div class="tier">
+      <div class="name">${esc(d.tier)}</div>
+      <div class="risk">${esc(d.band)}</div>
+      <div class="big">${Math.round(d.deposit_pct*100)}%</div>
+      <div class="smallmuted">${Math.round(d.cancel_reduction*100)}% assumed cancellation reduction</div>
+    </div>`).join("");
+  $("depositTable").innerHTML = DATA.depositTiers.map(d=>`
+    <tr><td><strong>${esc(d.tier)}</strong></td><td>${d.eligible.toLocaleString("en-GB")}</td><td>${fmtPct(d.share)}</td>
+      <td>${fmtPct(d.pred_cancel)}</td><td>${fmtPct(d.observed_cancel)}</td><td>${Math.round(d.deposit_pct*100)}%</td>
+      <td>${d.prevented.toFixed(0)}</td><td><strong>${fmtEur(d.net)}</strong></td></tr>`).join("");
+}
+
+function updateKpis(){
+  const key=scenarioKey(), p=DATA.overbooking.find(x=>x.k===+$("kSlider").value);
+  $("kValue").textContent=`k = ${$("kSlider").value}`;
+  $("kpiK").textContent=`k = ${$("kSlider").value}`;
+  $("kpiProfit").textContent=`${fmtEur(p[key])} expected profit / night`;
+  $("kpiDeposit").textContent=fmtK(DATA.depositMetrics.net_incremental);
+  $("kpiAuc").textContent=Math.max(...DATA.modelPerf.map(x=>x.auc)).toFixed(3);
+  $("kpiCancel").textContent=fmtPct(DATA.summary.test_cancel_rate);
+}
+
+function renderAll(){
+  updateKpis(); drawLead(); drawDeposit(); drawSeason(); drawAuc(); drawShap(); drawOverbooking();
+}
+
+$("segment").addEventListener("change", renderAll);
+$("modelView").addEventListener("change", ()=>{currentShap=$("modelView").value==="near"?"near":"booking"; document.querySelectorAll("[data-shap]").forEach(b=>b.classList.toggle("active",b.dataset.shap===currentShap)); drawAuc(); drawShap();});
+$("walkCost").addEventListener("change",renderAll);
+$("kSlider").addEventListener("input",renderAll);
+$("resetBtn").addEventListener("click",()=>{$("segment").value="All";$("modelView").value="booking";$("walkCost").value="base";$("kSlider").value=10;currentShap="booking";document.querySelectorAll("[data-shap]").forEach(b=>b.classList.toggle("active",b.dataset.shap==="booking"));renderAll()});
+$("printBtn").addEventListener("click",()=>window.print());
+document.querySelectorAll("[data-shap]").forEach(btn=>btn.addEventListener("click",()=>{currentShap=btn.dataset.shap;$("modelView").value=currentShap==="near"?"near":"booking";document.querySelectorAll("[data-shap]").forEach(b=>b.classList.toggle("active",b===btn));drawShap()}));
+
+renderPolicy();
+renderAll();
+</script>
+</body>
+</html>
