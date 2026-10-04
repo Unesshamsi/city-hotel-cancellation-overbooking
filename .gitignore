@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+data/raw/
+data/processed/
+*.xlsx
+*.pptx
+*.docx
+*.zip
+.DS_Store
