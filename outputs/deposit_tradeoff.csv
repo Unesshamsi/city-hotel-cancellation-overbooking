@@ -1,0 +1,3 @@
+scope,expected_cancellations_prevented,expected_bookings_lost,net_incremental_revenue_eur
+Medium risk only,115.48408727247127,75.16,2800.947479696548
+Medium + High risk,551.9399044846285,301.0,54737.5323815677

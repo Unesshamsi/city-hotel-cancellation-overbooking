@@ -1,0 +1,2 @@
+eligible_test_bookings,expected_cancellations_prevented,expected_bookings_lost,net_incremental_revenue_eur,baseline_expected_room_revenue_eur,policy_expected_room_revenue_eur,baseline_cancel_value_loss_eur,recovery_fraction_base
+7172,551.9399044846285,301.0,54737.5323815677,1903979.0949549912,1958716.627336559,1042670.0250450087,0.5

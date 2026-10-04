@@ -1,0 +1,144 @@
+{
+  "clean_file": "city_hotel_clean.csv",
+  "features_booking_time": [
+    "lead_time",
+    "arrival_month",
+    "arrival_dow",
+    "stays_in_weekend_nights",
+    "stays_in_week_nights",
+    "total_nights",
+    "adults",
+    "children",
+    "babies",
+    "total_guests",
+    "meal",
+    "country",
+    "market_segment",
+    "distribution_channel",
+    "is_repeated_guest",
+    "previous_cancellations",
+    "previous_bookings_not_canceled",
+    "reserved_room_type",
+    "deposit_type",
+    "has_agent",
+    "has_company",
+    "days_in_waiting_list",
+    "customer_type",
+    "adr",
+    "is_free_stay",
+    "is_zero_night",
+    "booking_dow",
+    "booking_month",
+    "is_arrival_holiday",
+    "days_to_nearest_holiday"
+  ],
+  "features_near_arrival": [
+    "lead_time",
+    "arrival_month",
+    "arrival_dow",
+    "stays_in_weekend_nights",
+    "stays_in_week_nights",
+    "total_nights",
+    "adults",
+    "children",
+    "babies",
+    "total_guests",
+    "meal",
+    "country",
+    "market_segment",
+    "distribution_channel",
+    "is_repeated_guest",
+    "previous_cancellations",
+    "previous_bookings_not_canceled",
+    "reserved_room_type",
+    "deposit_type",
+    "has_agent",
+    "has_company",
+    "days_in_waiting_list",
+    "customer_type",
+    "adr",
+    "is_free_stay",
+    "is_zero_night",
+    "booking_dow",
+    "booking_month",
+    "is_arrival_holiday",
+    "days_to_nearest_holiday",
+    "assigned_room_type",
+    "booking_changes",
+    "room_type_changed",
+    "required_car_parking_spaces",
+    "total_of_special_requests"
+  ],
+  "split": {
+    "train_end": "2016-12-12",
+    "calibration_end": "2017-02-24",
+    "test_start": "2017-02-25",
+    "train_n": 37307,
+    "calibration_n": 8034,
+    "test_n": 7932
+  },
+  "leakage_correction": [
+    "required_car_parking_spaces",
+    "total_of_special_requests"
+  ],
+  "overbooking": {
+    "base_capacity_rooms": 60.0,
+    "room_rate_eur": 98.8,
+    "walk_costs_eur": {
+      "Low": 125.0,
+      "Base": 200.0,
+      "High": 300.0
+    },
+    "base_optimal_k": 18,
+    "recommended_k_within_1pct": 8,
+    "base_optimal_profit_eur": 2940.33674531997,
+    "recommended_profit_eur": 2913.0350460008244,
+    "base_no_overbook_profit_eur": 2843.236386084903,
+    "optimal_profit_uplift_eur_per_night": 97.10035923506666,
+    "recommended_profit_uplift_eur_per_night": 69.79865991592123,
+    "optimal_realised_walks_per_night": 0.06914893617021277,
+    "recommended_realised_walks_per_night": 0.0
+  },
+  "deposit_policy": {
+    "base_assumptions": [
+      {
+        "tier": "Low risk",
+        "risk_band": "<20%",
+        "deposit_pct": 0.0,
+        "cancel_deterrence": 0.0,
+        "booking_loss": 0.0
+      },
+      {
+        "tier": "Medium risk",
+        "risk_band": "20%-40%",
+        "deposit_pct": 0.1,
+        "cancel_deterrence": 0.2,
+        "booking_loss": 0.04
+      },
+      {
+        "tier": "High risk",
+        "risk_band": ">40%",
+        "deposit_pct": 0.25,
+        "cancel_deterrence": 0.35,
+        "booking_loss": 0.08
+      }
+    ],
+    "base_recovery_fraction": 0.5,
+    "scenario_names": [
+      "Conservative",
+      "Base",
+      "Optimistic"
+    ],
+    "break_even_recovery_fraction": 0.2998868703110332,
+    "policy_exclusions": [
+      "Non Refund deposit type",
+      "Groups market segment",
+      "Offline TA/TO market segment"
+    ]
+  },
+  "external_data": {
+    "weather": "not supplied; no values fabricated",
+    "google_trends": "not supplied; loader supports last completed week join"
+  },
+  "canonical_script": "src/03_model_policy_analysis.py"
+}

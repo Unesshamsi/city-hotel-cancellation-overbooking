@@ -1,0 +1,25 @@
+case,risk_percentile,booking_date,arrival_date,actual_canceled,pred_cancel_prob,feature,feature_encoded,feature_value,shap_value_logodds,direction
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,market_segment,cat__market_segment_Online TA,Corporate,-0.8622761451655669,decreases cancellation risk
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,country,cat__country_PRT,ITA,-0.542444562400658,decreases cancellation risk
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,lead_time,num__lead_time,6,-0.4320068696919938,decreases cancellation risk
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,booking_month,num__booking_month,4,0.11585749042065605,increases cancellation risk
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,previous_cancellations,num__previous_cancellations,0,-0.10851998278234264,decreases cancellation risk
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,country,cat__country_ITA,ITA,0.09765519091511161,increases cancellation risk
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,customer_type,cat__customer_type_Transient,Transient,0.09554142766375151,increases cancellation risk
+1,10,2017-04-26,2017-05-02,0,0.007936507936507936,has_agent,num__has_agent,0,-0.07442952300392207,decreases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,market_segment,cat__market_segment_Online TA,Online TA,0.5109590153388618,increases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,country,cat__country_BEL,BEL,-0.4261076003848163,decreases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,adr,num__adr,137.5,0.315057915481871,increases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,booking_dow,num__booking_dow,6,-0.22526292769454243,decreases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,customer_type,cat__customer_type_Transient,Transient,0.21272742664096123,increases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,country,cat__country_PRT,BEL,-0.1941390795283844,decreases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,meal,cat__meal_SC,SC,0.1829637775152623,increases cancellation risk
+2,50,2017-04-30,2017-05-20,1,0.337431693989071,previous_cancellations,num__previous_cancellations,0,-0.10569694793898612,decreases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,market_segment,cat__market_segment_Online TA,Online TA,0.5746362863794429,increases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,adr,num__adr,193.0,0.34379195982079336,increases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,lead_time,num__lead_time,125,0.2946919433513586,increases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,country,cat__country_ITA,ITA,0.27666770532847357,increases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,country,cat__country_PRT,ITA,-0.22138261662789016,decreases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,customer_type,cat__customer_type_Transient,Transient,0.21824236422902035,increases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,booking_dow,num__booking_dow,6,-0.16404777597748868,decreases cancellation risk
+3,90,2017-04-09,2017-08-12,1,0.5063291139240504,previous_cancellations,num__previous_cancellations,0,-0.10529580546990785,decreases cancellation risk

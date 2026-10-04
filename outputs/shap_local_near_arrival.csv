@@ -1,0 +1,25 @@
+case,risk_percentile,booking_date,arrival_date,actual_canceled,pred_cancel_prob,feature,feature_encoded,feature_value,shap_value_logodds,direction
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,market_segment,cat__market_segment_Online TA,Offline TA/TO,-1.0122810579457162,decreases cancellation risk
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,country,cat__country_PRT,BEL,-0.7843561105101045,decreases cancellation risk
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,market_segment,cat__market_segment_Offline TA/TO,Offline TA/TO,-0.4269675799604954,decreases cancellation risk
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,total_of_special_requests,num__total_of_special_requests,0,0.39318382083796566,increases cancellation risk
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,country,cat__country_BEL,BEL,-0.3533800340960625,decreases cancellation risk
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,room_type_changed,num__room_type_changed,0,0.18250840527761583,increases cancellation risk
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,required_car_parking_spaces,num__required_car_parking_spaces,0,0.1619830351133944,increases cancellation risk
+1,10,2017-04-05,2017-05-02,0,0.007874015748031496,arrival_month,num__arrival_month,5,-0.1325400434703086,decreases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,total_of_special_requests,num__total_of_special_requests,2,-0.8928777279996589,decreases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,adr,num__adr,185.0,0.3936072728538375,increases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,total_nights,num__total_nights,8,0.3257579802305304,increases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,market_segment,cat__market_segment_Online TA,Online TA,0.2979810932377546,increases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,country,cat__country_PRT,GBR,-0.2520431062972724,decreases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,booking_month,num__booking_month,4,-0.24860610883918638,decreases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,room_type_changed,num__room_type_changed,0,0.22710602910184297,increases cancellation risk
+2,50,2017-04-14,2017-07-23,1,0.20689655172413796,required_car_parking_spaces,num__required_car_parking_spaces,0,0.19443863219584515,increases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,total_of_special_requests,num__total_of_special_requests,0,0.9603820423113028,increases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,market_segment,cat__market_segment_Online TA,Online TA,0.7782558519027049,increases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,adr,num__adr,130.5,0.4008747501659876,increases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,room_type_changed,num__room_type_changed,0,0.3206142982902082,increases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,country,cat__country_FRA,FRA,-0.2605206460630196,decreases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,country,cat__country_PRT,FRA,-0.23120261429939903,decreases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,lead_time,num__lead_time,60,0.21000705784992715,increases cancellation risk
+3,90,2017-03-09,2017-05-08,1,0.6179775280898876,required_car_parking_spaces,num__required_car_parking_spaces,0,0.2031961027492734,increases cancellation risk
