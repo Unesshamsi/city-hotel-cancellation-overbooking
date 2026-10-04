@@ -1,0 +1,15 @@
+step,finding,decision,rationale
+Filter,Source contains Resort Hotel (H1) and City Hotel (H2),Keep City Hotel rows only,The assignment scope is the city hotel; H2 is the Lisbon property in the source dataset.
+Missing: children,4 rows have children=NaN,Impute 0,Median/mode is 0 and the count is negligible.
+Missing: country,24 rows have country=NaN,Fill with 'Unknown',Retains observations while making missingness explicit.
+Missing: agent,"8,131 rows have agent=NaN",Create has_agent flag and keep raw ID only for audit,NaN means no travel-agent identifier in this dataset.
+Missing: company,"75,641 rows have company=NaN",Create has_company flag; exclude raw company ID from modelling,High-cardinality ID with structural missingness adds little beyond the flag.
+Duplicates,"25,902 exact full-row duplicates found",Drop exact duplicates for the main analysis,No booking ID exists to prove these are independent reservations; retaining them duplicates apparent events. A duplicate-retention robustness run is kept separately.
+Date derivation,"Raw file supplies arrival components and lead time, not booking date",Reconstruct booking_date = arrival_date - lead_time,This is the natural booking-time anchor available from the supplied schema.
+Outlier: zero guests,154 rows have no guests,Drop,No-guest observations are not meaningful customer stays for cancellation prediction.
+Outlier: ADR,"1 row(s) have ADR > €1,000",Drop the isolated extreme row,The value is far beyond the rest of the distribution and is treated as a probable data-entry error.
+Lead time,375 bookings exceed one year lead time,Keep without capping,Long-horizon/group bookings can be genuine and contain cancellation signal.
+Outcome leakage,reservation_status and reservation_status_date directly encode outcome timing,Drop both before modelling,They are post-outcome fields and would make prediction circular.
+Near-arrival-only fields,Parking and special requests are accumulated in the booking lifecycle and are zero/absent for cancelled bookings,Move required_car_parking_spaces and total_of_special_requests to the near-arrival model only,Including them at booking time materially contaminates the target with information that emerges after booking creation.
+Feature: weather,No historical weather file in supplied inputs,Leave absent,Do not fabricate external observations. The pipeline remains ready for Open-Meteo historical CSV export.
+Feature: search interest,No Google Trends export in supplied inputs,Leave absent,Do not fabricate indexed search interest. The pipeline supports standard Google Trends CSV exports.

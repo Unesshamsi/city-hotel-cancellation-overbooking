@@ -1,0 +1,42 @@
+feature,description,known_at
+lead_time,Days between booking and arrival,known at booking time
+arrival_date_year,Arrival year,known at booking time
+arrival_date_month,Arrival month text,known at booking time
+arrival_date_week_number,Arrival week number,known at booking time
+arrival_date_day_of_month,Arrival day,known at booking time
+arrival_month,Arrival month numeric,known at booking time
+arrival_dow,Arrival day of week,known at booking time
+stays_in_weekend_nights,Weekend nights booked,known at booking time
+stays_in_week_nights,Week nights booked,known at booking time
+total_nights,Total nights booked,known at booking time
+adults,Adults on booking,known at booking time
+children,Children on booking,known at booking time
+babies,Babies on booking,known at booking time
+total_guests,Total guests,known at booking time
+meal,Meal plan selected,known at booking time
+country,"Guest country of origin — retained for prediction but monitored for fairness, not used as a recommended tariff",known at booking time
+market_segment,Market segment,known at booking time
+distribution_channel,Distribution channel,known at booking time
+is_repeated_guest,Repeat guest flag,known at booking time
+previous_cancellations,Past cancellations,known at booking time
+previous_bookings_not_canceled,Past completed bookings,known at booking time
+reserved_room_type,Room type requested at booking,known at booking time
+deposit_type,Deposit type agreed at booking,known at booking time
+has_agent,Travel-agent flag,known at booking time
+has_company,Corporate booking flag,known at booking time
+days_in_waiting_list,Waiting-list days,known at booking time
+customer_type,Customer type,known at booking time
+adr,Average daily rate agreed at booking,known at booking time
+is_free_stay,Zero-rate stay flag,known at booking time
+is_zero_night,Zero-night booking flag,known at booking time
+booking_dow,Booking day of week,known at booking time
+booking_month,Booking month,known at booking time
+is_arrival_holiday,Arrival date is a PT holiday,known at booking time
+days_to_nearest_holiday,Distance to nearest PT holiday,known at booking time
+assigned_room_type,Room type assigned later in the booking lifecycle,known only near arrival
+booking_changes,Cumulative booking changes by near arrival,known only near arrival
+room_type_changed,Reserved and assigned room type differ,known only near arrival
+required_car_parking_spaces,Parking spaces required; recorded during the stay lifecycle,known only near arrival
+total_of_special_requests,Special requests accumulated after booking,known only near arrival
+reservation_status,Outcome field — directly encodes cancellation/no-show,DROPPED (leakage)
+reservation_status_date,Date outcome was recorded,DROPPED (leakage)
